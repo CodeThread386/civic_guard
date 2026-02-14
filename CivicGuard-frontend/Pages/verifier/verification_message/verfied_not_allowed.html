@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CivicGuard - Access Restricted</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2463eb",
+                        "primary-dark": "#1d4ed8",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111621",
+                        "warning": "#f97316", // Orange 500
+                        "warning-dark": "#c2410c", // Orange 700
+                        "card-dark": "#1e2433",
+                        "alert-bg": "#2a1810", // Dark orange-ish background for alert state
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                    boxShadow: {
+                        "glow-warning": "0 0 40px -10px rgba(249, 115, 22, 0.4)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        @keyframes warning-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); transform: scale(0.95); }
+            70% { box-shadow: 0 0 0 20px rgba(249, 115, 22, 0); transform: scale(1); }
+            100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); transform: scale(0.95); }
+        }
+        .animate-pulse-warning {
+            animation: warning-pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 min-h-screen flex flex-col antialiased">
+<header class="w-full h-16 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark flex items-center justify-between px-6 sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-white font-bold text-lg">
+            CG
+        </div>
+<span class="font-bold text-lg tracking-tight">CivicGuard</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span>Online • West Gate B</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+<span class="material-icons-round text-gray-500">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden border-2 border-primary/20">
+<img alt="Security Officer Profile" class="w-full h-full object-cover" data-alt="Close up of a security officer avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ8d5DFz1w4JVgBIWDHW1o_2dg47VJv1iQ8aghFrASmpcI4KD9w91EsDv7zkmHBv002BW-OJ1LxD_dJW_vHfxrGHXvcyJ_dfVHQGNObhuPdE1ADSGNklyzRx1-yJ8kkQtK25VD56iz2w53w5lyH5q-6_VZ664xswe1jB1y66Z7H0H6V_z98t6Mkng6oCNlsHHQB906w8_HHlQ77RZxmW_UoJjoF2dC2Zlyz2aI80STcq3W2j71fkXIoam-P3chiUBF_kESb7GFu_YS"/>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-warning/5 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="relative w-full max-w-md bg-white dark:bg-card-dark rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
+<div class="bg-gradient-to-b from-warning/10 to-transparent pt-12 pb-8 px-6 flex flex-col items-center text-center border-b border-gray-100 dark:border-gray-700/50">
+<div class="w-24 h-24 rounded-full bg-warning flex items-center justify-center mb-6 shadow-glow-warning animate-pulse-warning relative">
+<span class="material-icons-round text-white text-6xl">priority_high</span>
+<div class="absolute inset-0 border-4 border-warning/30 rounded-full scale-125"></div>
+</div>
+<h1 class="text-4xl font-black text-warning tracking-tight mb-2 uppercase">Access Restricted</h1>
+<p class="text-gray-500 dark:text-gray-400 font-medium max-w-xs leading-snug">Identity verified, but role permissions insufficient for this zone.</p>
+</div>
+<div class="p-6 space-y-6">
+<div class="flex items-start gap-5 p-4 bg-background-light dark:bg-alert-bg/50 rounded-xl border border-gray-200 dark:border-warning/20">
+<div class="flex-shrink-0">
+<div class="w-20 h-20 rounded-lg overflow-hidden border-2 border-white dark:border-gray-600 shadow-sm relative grayscale opacity-90">
+<img alt="Verified Individual" class="w-full h-full object-cover" data-alt="Headshot of a smiling young woman with light hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAsOkNu02FXn8q4p75x46Epim9hAQRbOHJ5yneFF9gaWuHQ8YUdvCNrbHTVoGNG3QKlqn4B8aQ10QALP5QiVXCbafo4Sbxy0LT8hfKMeo2vxJzqZJ-0GYJYQN1IsaSK4W4otMxmhMytFaQ6ziZ3BYCORgvUsFkzvUER399pOt6ZJlCJcu5qVG8Xg6LeIliwqJeWz_h-d5f5oGMsqXy5ndu3clQ57fvFRBUurS8cGIBhCLEpu72ADQHId0ejjfGAmxl3ZFQ3kUcdQEC"/>
+<div class="absolute bottom-0 right-0 w-5 h-5 bg-warning rounded-tl-lg flex items-center justify-center">
+<span class="material-icons-round text-white text-xs">remove_circle_outline</span>
+</div>
+</div>
+</div>
+<div class="flex-grow min-w-0">
+<h2 class="text-xl font-bold text-gray-900 dark:text-white truncate">Sarah J. Connor</h2>
+<p class="text-sm text-gray-500 font-semibold mb-1">RELIEF-8821-X</p>
+<div class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-warning/20 text-warning border border-warning/30">
+                        ROLE MISMATCH
+                    </div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-3 bg-background-light dark:bg-background-dark rounded-lg border border-gray-100 dark:border-gray-800">
+<span class="block text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">Required Clearance</span>
+<div class="flex items-center gap-2">
+<span class="material-icons-round text-warning text-sm">lock</span>
+<span class="text-sm font-bold text-gray-900 dark:text-gray-200">Level 4 (Medical)</span>
+</div>
+</div>
+<div class="p-3 bg-background-light dark:bg-background-dark rounded-lg border border-gray-100 dark:border-gray-800">
+<span class="block text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">Current Role</span>
+<div class="flex items-center gap-2">
+<span class="material-icons-round text-gray-400 text-sm">badge</span>
+<span class="text-sm font-medium dark:text-gray-200">Level 2 (Logistic)</span>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-red-500/10 dark:bg-red-500/5 rounded-lg border border-red-500/20">
+<span class="material-icons-round text-red-500 text-xl mt-0.5">report_problem</span>
+<div class="text-sm">
+<p class="font-bold text-red-600 dark:text-red-400">Security Protocol Alpha</p>
+<p class="text-gray-600 dark:text-gray-400 text-xs mt-0.5">Do not admit. Direct individual to checkpoint C for re-evaluation.</p>
+</div>
+</div>
+</div>
+<div class="p-6 pt-2 flex flex-col gap-3 bg-white dark:bg-card-dark z-10">
+<button class="w-full bg-gray-800 hover:bg-gray-900 dark:bg-white dark:hover:bg-gray-200 dark:text-black text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-lg">
+<span class="material-icons-round">qr_code_scanner</span>
+                Scan Next Person
+            </button>
+<button class="w-full bg-transparent hover:bg-background-light dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 font-semibold py-3 px-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 transition-all flex items-center justify-center gap-2">
+<span class="material-icons-round text-gray-400">person_search</span>
+                View Full Details
+            </button>
+</div>
+<div class="absolute top-0 left-0 w-full h-1 bg-gray-200 dark:bg-gray-700">
+<div class="h-full bg-warning w-full animate-[width_10s_linear_forwards]" style="width: 100%"></div>
+</div>
+</div>
+</main>
+<footer class="bg-white dark:bg-background-dark border-t border-gray-200 dark:border-gray-800 py-3 px-6 text-center text-xs text-gray-500 dark:text-gray-400">
+<p>System Status: <span class="text-success font-semibold">Operational</span> | Synced 3s ago</p>
+</footer>
+
+</body></html>

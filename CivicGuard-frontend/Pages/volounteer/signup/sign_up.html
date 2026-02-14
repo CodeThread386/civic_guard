@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CivicGuard - Volunteer Signup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2563eb", // Blue-600
+                        "primary-hover": "#1d4ed8", // Blue-700
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#020617", // Slate-950
+                        "surface-dark": "#0f172a", // Slate-900
+                        "surface-border": "#1e293b", // Slate-800
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", 
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        'neon': '0 0 5px theme("colors.primary"), 0 0 20px theme("colors.primary")',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155; 
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
+            -webkit-text-fill-color: white !important;
+            caret-color: white !important;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-50 font-display antialiased min-h-screen p-4 py-8 selection:bg-primary selection:text-white relative">
+<div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+<div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_#2563eb_0%,_transparent_50%)]"></div>
+<div class="absolute bottom-0 right-0 w-96 h-96 bg-primary rounded-full blur-[120px] opacity-20"></div>
+</div>
+<div class="relative z-10 w-full max-w-md mx-auto">
+<div class="text-center mb-8">
+<a href="../../landing/landing.html" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors mb-4">
+<span class="material-icons text-sm">arrow_back</span>
+                Back to Home
+            </a>
+<div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-surface-dark border border-surface-border shadow-lg mb-4">
+<span class="material-icons text-primary text-3xl">verified_user</span>
+</div>
+<h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">CivicGuard</h1>
+<p class="text-slate-500 dark:text-slate-400 mt-2 text-sm font-medium tracking-wide uppercase">Crisis Identity Verification</p>
+</div>
+<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-surface-border rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm">
+<div class="p-2 border-b border-slate-200 dark:border-surface-border bg-slate-50 dark:bg-[#0b1120]">
+<div class="relative flex bg-slate-200 dark:bg-surface-border rounded-lg p-1">
+<div class="w-1/2 h-full absolute left-0 top-0 p-1 transition-all duration-300 ease-in-out transform translate-x-full" id="slider-bg">
+<div class="w-full h-full bg-white dark:bg-slate-700 rounded shadow-sm"></div>
+</div>
+<button class="relative z-10 w-1/2 text-sm font-medium py-2 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none" onclick="toggleForm('login')">
+                        Login
+                    </button>
+<button class="relative z-10 w-1/2 text-sm font-medium py-2 rounded-md text-slate-900 dark:text-white transition-colors focus:outline-none" onclick="toggleForm('signup')">
+                        Signup
+                    </button>
+</div>
+</div>
+<div class="p-6 sm:p-8">
+<form class="space-y-6 hidden" id="login-form">
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2" for="email">
+                            Email or Wallet Address
+                        </label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<span class="material-icons text-sm">email</span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-surface-border rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm transition-all shadow-sm" id="email" name="email" placeholder="responder@civicguard.org" type="text"/>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-2">
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" for="password">
+                                Password
+                            </label>
+<a class="text-xs font-medium text-primary hover:text-primary-hover transition-colors" href="#">Forgot password?</a>
+</div>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<span class="material-icons text-sm">lock</span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-surface-border rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm transition-all shadow-sm" id="password" name="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<button class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-slate-900 transition-all duration-200 shadow-lg shadow-primary/30" type="button">
+<span class="absolute left-0 inset-y-0 flex items-center pl-3">
+<span class="material-icons text-white/50 group-hover:text-white transition-colors text-sm">login</span>
+</span>
+                        Volunteer Access
+                    </button>
+</form>
+<form class="space-y-5 block" id="signup-form">
+<div class="grid grid-cols-1 gap-5">
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2" for="fullname">
+                                Full Name
+                            </label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<span class="material-icons text-sm">badge</span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-surface-border rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm transition-all shadow-sm" id="fullname" name="fullname" placeholder="Jane Doe" type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2" for="signup-email">
+                                Email Address
+                            </label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<span class="material-icons text-sm">email</span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-surface-border rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm transition-all shadow-sm" id="signup-email" name="signup-email" placeholder="responder@civicguard.org" type="email"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2" for="signup-password">
+                                    Password
+                                </label>
+<input class="block w-full px-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-surface-border rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm transition-all shadow-sm" id="signup-password" name="signup-password" placeholder="••••••" type="password"/>
+</div>
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2" for="confirm-password">
+                                    Confirm
+                                </label>
+<input class="block w-full px-3 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-surface-border rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm transition-all shadow-sm" id="confirm-password" name="confirm-password" placeholder="••••••" type="password"/>
+</div>
+</div>
+</div>
+<button class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-slate-900 transition-all duration-200 shadow-lg shadow-primary/30" type="button">
+<span class="absolute left-0 inset-y-0 flex items-center pl-3">
+<span class="material-icons text-white/50 group-hover:text-white transition-colors text-sm">person_add</span>
+</span>
+                        Create Volunteer Account
+                    </button>
+<p class="text-center text-xs text-slate-500 dark:text-slate-400 mt-4">
+                        By registering, you agree to our <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+                    </p>
+</form>
+<div class="relative my-6">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-slate-200 dark:border-surface-border"></div>
+</div>
+<div class="relative flex justify-center text-xs uppercase tracking-wide">
+<span class="px-2 bg-white dark:bg-surface-dark text-slate-400 dark:text-slate-500">Or sign up with</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-3 px-4 py-3 border border-slate-300 dark:border-surface-border rounded-lg shadow-sm bg-white dark:bg-slate-900/50 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-surface-border hover:border-slate-400 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-slate-900 transition-all" type="button">
+<svg class="h-5 w-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" fill="#EA4335"></path>
+<path d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" fill="#4285F4"></path>
+<path d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" fill="#FBBC05"></path>
+<path d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" fill="#34A853"></path>
+</svg>
+                    Sign up with Google
+                </button>
+</div>
+<div class="bg-slate-100 dark:bg-surface-border/50 px-6 py-3 border-t border-slate-200 dark:border-surface-border flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-xs font-mono text-slate-500 dark:text-slate-400">SYSTEM ONLINE</span>
+</div>
+<div class="text-xs text-slate-400 dark:text-slate-500">v2.4.1</div>
+</div>
+</div>
+<div class="text-center mt-6 mb-8">
+<a class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-icons text-sm">help_outline</span>
+                Need assistance?
+            </a>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1/3 z-0 opacity-10 pointer-events-none overflow-hidden" data-alt="Abstract subtle grid lines representing a digital map overlay for disaster relief">
+<div class="w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_100%,#000_70%,transparent_100%)]"></div>
+</div>
+<script>
+        function toggleForm(type) {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const sliderBg = document.getElementById('slider-bg');
+            const buttons = sliderBg.parentElement.querySelectorAll('button');
+            if (type === 'login') {
+                loginForm.classList.remove('hidden');
+                loginForm.classList.add('block');
+                signupForm.classList.remove('block');
+                signupForm.classList.add('hidden');
+                // Animate Slider
+                sliderBg.style.transform = 'translateX(0)';
+                // Text Colors
+                buttons[0].classList.remove('text-slate-500', 'dark:text-slate-400');
+                buttons[0].classList.add('text-slate-900', 'dark:text-white');
+                buttons[1].classList.add('text-slate-500', 'dark:text-slate-400');
+                buttons[1].classList.remove('text-slate-900', 'dark:text-white');
+            } else {
+                loginForm.classList.remove('block');
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                signupForm.classList.add('block');
+                // Animate Slider
+                sliderBg.style.transform = 'translateX(100%)';
+                 // Text Colors
+                buttons[1].classList.remove('text-slate-500', 'dark:text-slate-400');
+                buttons[1].classList.add('text-slate-900', 'dark:text-white');
+                buttons[0].classList.add('text-slate-500', 'dark:text-slate-400');
+                buttons[0].classList.remove('text-slate-900', 'dark:text-white');
+            }
+        }
+    </script>
+
+</body></html>

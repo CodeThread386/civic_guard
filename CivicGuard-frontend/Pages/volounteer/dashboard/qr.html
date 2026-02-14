@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CivicGuard - Generate ZK-ID Result</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#2463eb",
+              "primary-dark": "#1d4ed8",
+              "background-light": "#f6f6f8",
+              "background-dark": "#111621",
+              "surface-dark": "#1a202e",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            animation: {
+                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            }
+          },
+        },
+      }
+    </script>
+<style>.bg-grid-pattern {
+            background-image: linear-gradient(to right, #2463eb1a 1px, transparent 1px),
+                              linear-gradient(to bottom, #2463eb1a 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .glow-effect {
+            box-shadow: 0 0 20px -5px rgba(36, 99, 235, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
+<div class="fixed inset-0 pointer-events-none overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-96 bg-primary/10 blur-[100px] rounded-full transform -translate-y-1/2"></div>
+<div class="absolute bottom-0 right-0 w-96 h-96 bg-primary/5 blur-[80px] rounded-full transform translate-y-1/4 translate-x-1/4"></div>
+<div class="absolute inset-0 bg-grid-pattern opacity-[0.15]"></div>
+</div>
+<nav class="relative z-10 w-full px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button onclick="navigateTo('dashboard.html')" class="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800">
+<span class="material-icons">arrow_back</span>
+</button>
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+<span class="material-icons text-white text-sm">shield</span>
+</div>
+<span class="text-lg font-bold tracking-tight">CivicGuard</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-xs font-medium text-green-500 uppercase tracking-wider">Secure Connection</span>
+</div>
+</div>
+</nav>
+<main class="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8 sm:px-6">
+<div class="w-full max-w-md">
+<div class="text-center mb-8">
+<div class="inline-flex items-center justify-center p-3 mb-4 rounded-full bg-primary/10 border border-primary/20 text-primary">
+<span class="material-icons text-2xl">verified_user</span>
+</div>
+<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Identity Verified</h1>
+<p class="text-gray-500 dark:text-gray-400">Zero-Knowledge Proof Generated Successfully</p>
+</div>
+<div class="relative group bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden glow-effect transition-all duration-300 hover:border-primary/50">
+<div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700/50 flex justify-between items-center bg-gray-50 dark:bg-white/5">
+<span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">ZK-ID #8829-AF</span>
+<div class="flex items-center gap-1.5 text-orange-500">
+<span class="material-icons text-sm">timer</span>
+<span class="text-xs font-mono font-medium">04:59</span>
+</div>
+</div>
+<div class="p-8 flex flex-col items-center justify-center relative bg-white">
+<div class="relative w-64 h-64 bg-white rounded-lg p-2 shadow-inner border-2 border-gray-100">
+<img alt="High contrast QR code for identity verification" class="w-full h-full object-contain mix-blend-multiply" data-alt="Black and white QR code pattern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3aRbw9ZtKPIWbs3xYkyLWip60glXez3tpHcKCobq3i2EbJRZ0DPzRCKh_OKh397hqkB14tQXjWmcCnCz0YkB7-UasDzsr1g3MEwL_5fTYXsfI1i8qjuTaRxuAdF8Nd5S3xYMU8Qf7afIS0OJkPWgjmpt424zyxsYvs9KhgdirqQkd8BoO5QwHnxGbfhDIPsxIz1loFiU1WrTaoqHTOe63iU_pBF1GoTIOjiCmBwVnZqJ6_BpZsEgnpbFMz5guhf2uZeyO9wi4Fa1x"/>
+<div class="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-primary -translate-x-1 -translate-y-1"></div>
+<div class="absolute top-0 right-0 w-4 h-4 border-r-2 border-t-2 border-primary translate-x-1 -translate-y-1"></div>
+<div class="absolute bottom-0 left-0 w-4 h-4 border-l-2 border-b-2 border-primary -translate-x-1 translate-y-1"></div>
+<div class="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-primary translate-x-1 translate-y-1"></div>
+</div>
+</div>
+<div class="px-6 py-5 bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-gray-700/50 text-center">
+<p class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Show this code to the Verifier</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Ensure screen brightness is set to max</p>
+</div>
+</div>
+<div class="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/10 flex items-start gap-3">
+<span class="material-icons text-primary text-sm mt-0.5">lock</span>
+<p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+<strong class="text-primary block mb-0.5">Privacy Protected</strong>
+                    This QR code contains a Zero-Knowledge Proof. It verifies your eligibility for relief aid without revealing your name, address, or other personal data.
+                </p>
+</div>
+<div class="mt-8 flex flex-col sm:flex-row gap-3">
+<button class="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary-dark text-white font-medium transition-colors shadow-lg shadow-primary/25 group">
+<span class="material-icons text-lg group-hover:scale-110 transition-transform">download</span>
+                    Save for Offline Use
+                </button>
+<button class="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-transparent border border-gray-300 dark:border-gray-600 hover:border-primary text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary font-medium transition-all">
+<span class="material-icons text-lg">refresh</span>
+                    Regenerate ID
+                </button>
+</div>
+</div>
+</main>
+<footer class="relative z-10 py-6 text-center text-xs text-gray-500 dark:text-gray-500">
+<div class="flex items-center justify-center gap-2 mb-2">
+<span class="material-icons text-[14px]">verified</span>
+<span>AES-256 Encrypted</span>
+<span class="mx-1">•</span>
+<span>Blockchain Verified</span>
+</div>
+<p>© 2024 CivicGuard Disaster Response Network</p>
+</footer>
+
+<script>
+    function navigateTo(path) {
+        window.location.href = path;
+    }
+</script>
+
+</body></html>
