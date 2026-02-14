@@ -43,6 +43,15 @@ export async function processApprovedDocument(
   const wallet = new ethers.Wallet(privateKey);
   const userAddress = wallet.address;
 
+  // CRITICAL: Record on-chain FIRST. Only add to local after success.
+  // This ensures verification (which checks chain only) always matches what we display.
+  await recordDocumentOnChain(
+    privateKey,
+    docHash,
+    data.verifierPubKeyHash,
+    data.documentType
+  );
+
   addLocalHash(
     {
       hash: docHash,
@@ -52,12 +61,5 @@ export async function processApprovedDocument(
       metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
     },
     userAddress
-  );
-
-  await recordDocumentOnChain(
-    privateKey,
-    docHash,
-    data.verifierPubKeyHash,
-    data.documentType
   );
 }

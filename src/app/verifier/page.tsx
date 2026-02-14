@@ -282,7 +282,8 @@ export default function VerifierPage() {
         <section className="mb-8">
           <h2 className="text-lg font-medium text-white mb-4">Required Documents</h2>
           <p className="text-slate-400 text-sm mb-4">
-            Select the documents you need to verify. The volunteer must have shared a QR via &quot;Share for Verification&quot;.
+            Select the documents you need to verify. Each volunteer shares their own QR via &quot;Share for Verification&quot;.
+            You can verify multiple users by scanning each person&apos;s QR—each scan verifies that specific user&apos;s documents only.
           </p>
           <div className="flex flex-wrap gap-2 mb-4">
             {ALL_DOC_TYPES.map((doc) => (

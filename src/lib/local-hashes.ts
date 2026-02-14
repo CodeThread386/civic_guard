@@ -1,13 +1,23 @@
 /**
  * Client-side local storage of document hashes.
  * Used in conjunction with blockchain storage for redundancy.
- * All data is scoped by user address to prevent cross-user data leakage.
+ *
+ * CRITICAL: All data is scoped by user address to prevent cross-user data leakage.
+ * User A's documents (e.g. Aadhar) must NEVER be visible to User B on the same device.
+ * Keys: civicguard_doc_hashes_${address}, civicguard_processed_requests_${address}
  */
 const STORAGE_KEY_PREFIX = 'civicguard_doc_hashes_';
 const PROCESSED_REQUESTS_KEY_PREFIX = 'civicguard_processed_requests_';
 
 function normalizeAddress(addr: string): string {
   return (addr || '').toLowerCase().trim();
+}
+
+/** Guard: never use without a valid user address to prevent cross-user leakage */
+function requireAddress(addr: string): void {
+  if (!addr || typeof addr !== 'string' || addr.trim().length < 10) {
+    throw new Error('User address required for document storage access');
+  }
 }
 
 function getHashesKey(address: string): string {
@@ -29,6 +39,7 @@ export type StoredHash = {
 export function getLocalHashes(userAddress: string): StoredHash[] {
   if (typeof window === 'undefined') return [];
   if (!userAddress) return [];
+  requireAddress(userAddress);
   try {
     const raw = localStorage.getItem(getHashesKey(userAddress));
     if (!raw) return [];
@@ -40,6 +51,7 @@ export function getLocalHashes(userAddress: string): StoredHash[] {
 
 export function addLocalHash(entry: StoredHash, userAddress: string): void {
   if (!userAddress) return;
+  requireAddress(userAddress);
   const hashes = getLocalHashes(userAddress);
   if (hashes.some((h) => h.hash === entry.hash)) return;
   hashes.push(entry);
@@ -56,6 +68,7 @@ export function getLocalDocumentTypes(userAddress: string): string[] {
 export function getProcessedRequestIds(userAddress: string): string[] {
   if (typeof window === 'undefined') return [];
   if (!userAddress) return [];
+  requireAddress(userAddress);
   try {
     const raw = localStorage.getItem(getProcessedKey(userAddress));
     if (!raw) return [];
@@ -67,6 +80,7 @@ export function getProcessedRequestIds(userAddress: string): string[] {
 
 export function markRequestProcessed(requestId: string, userAddress: string): void {
   if (!userAddress) return;
+  requireAddress(userAddress);
   const ids = getProcessedRequestIds(userAddress);
   if (ids.includes(requestId)) return;
   ids.push(requestId);
@@ -75,6 +89,8 @@ export function markRequestProcessed(requestId: string, userAddress: string): vo
 
 /** Get metadata per document type (most recent entry per type). */
 export function getMetadataByDocType(userAddress: string): Record<string, Record<string, string>> {
+  if (!userAddress) return {};
+  requireAddress(userAddress);
   const hashes = getLocalHashes(userAddress);
   const byType: Record<string, { meta: Record<string, string>; ts: number }> = {};
   for (const h of hashes) {

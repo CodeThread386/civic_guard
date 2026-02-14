@@ -12,7 +12,7 @@ type Step = 'mode' | 'role' | 'email' | 'otp' | 'complete';
 export default function AuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, signup, completeSignup } = useAuth();
+  const { login, signup, completeSignup, logout } = useAuth();
   const [mode, setMode] = useState<AuthMode | null>(null);
 
   useEffect(() => {
@@ -89,6 +89,18 @@ export default function AuthPage() {
       setOtpVerified(true);
 
       if (mode === 'signup') {
+        // Reject signup if email already registered - prevents confusion
+        const lookupRes = await fetch('/api/auth/lookup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email.trim() }),
+        });
+        if (lookupRes.ok) {
+          setError('This email is already registered. Please use Login instead.');
+          setOtpVerified(false);
+          setLoading(false);
+          return;
+        }
         const signupResult = await signup(email, role!);
         if (signupResult.wallet) {
           setWallet(signupResult.wallet);

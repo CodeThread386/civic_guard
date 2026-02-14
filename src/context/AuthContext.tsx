@@ -105,24 +105,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       saveAuth(stored);
     }
 
+    let blockchainPending = false;
     try {
       const addr = stored!.address!;
       const exists = await checkUserExists(addr);
       if (!exists) {
-        return { success: false, error: 'Account not found on blockchain. Please sign up again.' };
+        blockchainPending = true;
       }
     } catch (e) {
-      return { success: false, error: 'Blockchain unavailable. Try again later.' };
+      blockchainPending = true;
     }
 
-    setAuth({
+    const authState = {
       email: stored!.email!,
       role: (stored!.role as UserRole) || role,
       address: stored!.address!,
       privateKey: stored!.privateKey!,
       isAuthenticated: true,
-    });
-    saveAuth(stored);
+      blockchainPending,
+    };
+    setAuth(authState);
+    saveAuth({ ...stored, blockchainPending });
     return { success: true };
   }, []);
 

@@ -80,13 +80,19 @@ export async function getPendingForVerifier(verifierPubKeyHash: string): Promise
   );
 }
 
+function addressesMatch(a: string, b: string): boolean {
+  if (!a || !b) return false;
+  return a.toLowerCase().trim() === b.toLowerCase().trim();
+}
+
 export async function getApprovedForUser(userAddress: string): Promise<DocumentRequest[]> {
   const data = await load();
-  const normalized = userAddress?.toLowerCase?.() || userAddress;
+  const normalized = (userAddress || '').toLowerCase().trim();
+  if (!normalized) return [];
   return Object.values(data).filter(
     (r) =>
       r.status === 'approved' &&
       r.documentContent &&
-      (r.userAddress?.toLowerCase?.() === normalized || r.userAddress === userAddress)
+      addressesMatch(r.userAddress, userAddress)
   );
 }

@@ -62,6 +62,25 @@ export default function DashboardPage() {
         await refreshDocuments();
         return;
       }
+      if (auth.blockchainPending && auth.email) {
+        try {
+          const completeRes = await fetch('/api/auth/complete-blockchain', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: auth.email }),
+          });
+          const completeData = await completeRes.json();
+          if (completeRes.ok && completeData.success) {
+            const stored = JSON.parse(localStorage.getItem('civicguard_auth') || '{}');
+            stored.blockchainPending = false;
+            localStorage.setItem('civicguard_auth', JSON.stringify(stored));
+            window.location.reload();
+            return;
+          }
+        } catch {
+          console.warn('Could not complete blockchain registration');
+        }
+      }
       setProcessingCount(toProcess.length);
       for (const req of toProcess) {
         try {
@@ -86,6 +105,8 @@ export default function DashboardPage() {
           const msg = e instanceof Error ? e.message : String(e);
           if (msg.includes('already recorded') || msg.includes('Document already recorded')) {
             markRequestProcessed(req.id, auth.address);
+          } else if (msg.includes('User not registered')) {
+            console.warn('User not on chain - complete registration first. Doc will retry after.', req.id);
           } else {
             console.error('Process approved doc error:', req.id, e);
           }
@@ -97,7 +118,7 @@ export default function DashboardPage() {
     } finally {
       await refreshDocuments();
     }
-  }, [auth.address, auth.isAuthenticated, auth.privateKey, refreshDocuments]);
+  }, [auth.address, auth.isAuthenticated, auth.privateKey, auth.blockchainPending, auth.email, refreshDocuments]);
 
   useEffect(() => {
     fetchAndProcessApproved();
@@ -174,8 +195,8 @@ export default function DashboardPage() {
       setShowShareModal(true);
     } catch (error) {
       // Verification failed or cancelled
-      const message = error instanceof Error 
-        ? error.message 
+      const message = error instanceof Error
+        ? error.message
         : 'Biometric verification failed';
       alert(message);
     } finally {
@@ -256,7 +277,15 @@ export default function DashboardPage() {
         </div>
 
         <div className="p-6 bg-slate-800/50 rounded-xl border border-slate-700">
-          <h2 className="text-white font-medium mb-2">Your Documents</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-white font-medium">Your Documents</h2>
+            <button
+              onClick={() => { setLoading(true); refreshDocuments(); }}
+              className="text-sm text-teal-400 hover:text-teal-300"
+            >
+              Refresh
+            </button>
+          </div>
           {loading && processingCount === 0 ? (
             <p className="text-slate-500">Loading...</p>
           ) : processingCount > 0 ? (
@@ -282,7 +311,10 @@ export default function DashboardPage() {
           userAddress={auth.address}
           privateKey={auth.privateKey}
           onClose={() => setShowUploadModal(false)}
-          onSuccess={() => setShowUploadModal(false)}
+          onSuccess={() => {
+            setShowUploadModal(false);
+            refreshDocuments();
+          }}
         />
       )}
 

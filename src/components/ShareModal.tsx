@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
-import { getLocalDocumentTypes, getMetadataByDocType } from '@/lib/local-hashes';
+import { getMetadataByDocType } from '@/lib/local-hashes';
 import { getUserDocumentTypes } from '@/lib/blockchain';
 import { ethers } from 'ethers';
 
@@ -22,18 +22,19 @@ export function ShareModal({ address, onClose }: Props) {
     setLoading(true);
     setError('');
     try {
-      const localTypes = getLocalDocumentTypes(address);
+      // Verification checks blockchain only. Share ONLY on-chain documents.
+      const pubKeyHash = ethers.keccak256(ethers.toUtf8Bytes(address));
       let chainTypes: string[] = [];
       try {
-        const pubKeyHash = ethers.keccak256(ethers.toUtf8Bytes(address));
         chainTypes = await getUserDocumentTypes(pubKeyHash);
         if (!Array.isArray(chainTypes)) chainTypes = [];
-      } catch {
-        // ignore
+      } catch (e) {
+        setError('Could not reach blockchain. Ensure Hardhat node is running and you have completed registration.');
+        setLoading(false);
+        return;
       }
-      const docTypes = Array.from(new Set([...localTypes, ...chainTypes]));
-      if (docTypes.length === 0) {
-        setError('No documents to share. Request and receive documents first.');
+      if (chainTypes.length === 0) {
+        setError('No documents on-chain yet. Complete blockchain registration, then request documents from an issuer. Documents must be recorded on-chain before sharing.');
         setLoading(false);
         return;
       }
@@ -41,7 +42,7 @@ export function ShareModal({ address, onClose }: Props) {
       const res = await fetch('/api/share/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address, docTypes, metadata }),
+        body: JSON.stringify({ address, docTypes: chainTypes, metadata }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to create share');
@@ -92,17 +93,15 @@ export function ShareModal({ address, onClose }: Props) {
               ) : error ? (
                 <div className="space-y-2">
                   <p className="text-red-400 text-sm text-center">{error}</p>
-                  {!error.includes('No documents') && (
-                    <div className="flex justify-center">
-                      <button
-                        type="button"
-                        onClick={createShare}
-                        className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-sm font-medium"
-                      >
-                        Try Again
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={createShare}
+                      className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-sm font-medium"
+                    >
+                      Try Again
+                    </button>
+                  </div>
                 </div>
               ) : null}
             </>
