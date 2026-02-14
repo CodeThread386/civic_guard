@@ -3,6 +3,7 @@
  * Used by UploadDocumentModal (when modal is open during approval) and
  * Dashboard (when loading approved docs that were approved while volunteer was away).
  */
+import { ethers } from 'ethers';
 import { hashDocument } from '@/lib/crypto';
 import { addLocalHash } from '@/lib/local-hashes';
 import { extractMetadata } from '@/lib/document-metadata';
@@ -39,13 +40,19 @@ export async function processApprovedDocument(
     ? extractMetadata(data.documentType, data.formData || {})
     : {};
 
-  addLocalHash({
-    hash: docHash,
-    documentType: data.documentType,
-    verifierPubKeyHash: data.verifierPubKeyHash,
-    timestamp: Date.now(),
-    metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
-  });
+  const wallet = new ethers.Wallet(privateKey);
+  const userAddress = wallet.address;
+
+  addLocalHash(
+    {
+      hash: docHash,
+      documentType: data.documentType,
+      verifierPubKeyHash: data.verifierPubKeyHash,
+      timestamp: Date.now(),
+      metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+    },
+    userAddress
+  );
 
   await recordDocumentOnChain(
     privateKey,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { otpSet } from '@/lib/otp-store';
+import { getUserByEmail } from '@/lib/user-registry';
 import nodemailer from 'nodemailer';
 
 const OTP_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
@@ -10,12 +11,22 @@ function generateOTP(): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
+    const { email, mode } = await request.json();
     if (!email || typeof email !== 'string') {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     const normalizedEmail = email.toLowerCase().trim();
+
+    if (mode === 'login') {
+      const existingUser = await getUserByEmail(normalizedEmail);
+      if (!existingUser) {
+        return NextResponse.json(
+          { error: 'No account found for this email. Please sign up first.' },
+          { status: 404 }
+        );
+      }
+    }
     const otp = generateOTP();
 
     await otpSet(normalizedEmail, {

@@ -18,6 +18,7 @@ export default function IssuerPage() {
   }>>([]);
   const [reviewRequest, setReviewRequest] = useState<typeof pendingRequests[0] | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [completingBlockchain, setCompletingBlockchain] = useState(false);
 
   useEffect(() => {
     if (!authLoaded) return;
@@ -127,6 +128,31 @@ export default function IssuerPage() {
     );
   }
 
+  const handleCompleteBlockchain = async () => {
+    if (!auth.email) return;
+    setCompletingBlockchain(true);
+    try {
+      const res = await fetch('/api/auth/complete-blockchain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: auth.email }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        const stored = JSON.parse(localStorage.getItem('civicguard_auth') || '{}');
+        stored.blockchainPending = false;
+        localStorage.setItem('civicguard_auth', JSON.stringify(stored));
+        window.location.reload();
+      } else {
+        alert(data.error || 'Failed. Is Hardhat node running?');
+      }
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed');
+    } finally {
+      setCompletingBlockchain(false);
+    }
+  };
+
   const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
   if (!contractAddress || contractAddress.trim() === '') {
     return (
@@ -162,6 +188,23 @@ export default function IssuerPage() {
           </div>
         </div>
       </header>
+
+      {auth.blockchainPending && (
+        <div className="max-w-4xl mx-auto px-4 pt-4">
+          <div className="p-4 bg-amber-900/30 border border-amber-600/50 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p className="text-amber-200 text-sm">
+              Complete blockchain registration to approve documents. Start Hardhat: <code className="bg-slate-800 px-2 py-0.5 rounded">npx hardhat node</code>
+            </p>
+            <button
+              onClick={handleCompleteBlockchain}
+              disabled={completingBlockchain}
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm whitespace-nowrap"
+            >
+              {completingBlockchain ? 'Completing...' : 'Complete Registration'}
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         <section>

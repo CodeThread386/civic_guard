@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
     const user = await getUserByEmail(email);
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: 'No account found. Please sign up first.' }, { status: 404 });
     }
 
     return NextResponse.json({

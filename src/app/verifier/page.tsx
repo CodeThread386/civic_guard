@@ -130,7 +130,7 @@ export default function VerifierPage() {
     setVerifyError(null);
     setVerifyResult(null);
     try {
-      const html5Qr = new Html5Qrcode('qr-reader-file', { useBarCodeDetectorIfSupported: false });
+      const html5Qr = new Html5Qrcode('qr-reader-file', false);
       const decodedText = await html5Qr.scanFile(file, false);
       const shortId = extractShortIdFromQR(decodedText);
       if (shortId) {
@@ -184,7 +184,7 @@ export default function VerifierPage() {
       };
 
       try {
-        html5Qr = new Html5Qrcode('qr-reader', { useBarCodeDetectorIfSupported: false });
+        html5Qr = new Html5Qrcode('qr-reader', false);
         scannerRef.current = html5Qr;
 
         const constraints = { facingMode: 'user' as const };

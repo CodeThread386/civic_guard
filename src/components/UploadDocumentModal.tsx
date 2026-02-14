@@ -128,7 +128,7 @@ export function UploadDocumentModal({ userEmail, userAddress, privateKey, onClos
               },
               privateKey
             );
-            markRequestProcessed(requestId);
+            markRequestProcessed(requestId, userAddress);
             onSuccess();
             onClose();
           } catch (e) {

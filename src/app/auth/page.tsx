@@ -16,8 +16,15 @@ export default function AuthPage() {
   const [mode, setMode] = useState<AuthMode | null>(null);
 
   useEffect(() => {
+    const r = searchParams.get('role');
     const m = searchParams.get('mode');
-    if (m === 'login' || m === 'signup') setMode(m);
+    if (r === 'verifier') {
+      setRole('verifier');
+      setMode('login'); // Issuer: login only, no signup
+    } else if (r === 'user') {
+      setRole('user');
+      setMode(m === 'login' || m === 'signup' ? m : null);
+    }
   }, [searchParams]);
   const [role, setRole] = useState<'user' | 'verifier' | null>(null);
   const [email, setEmail] = useState('');
@@ -30,8 +37,8 @@ export default function AuthPage() {
   const [devOtp, setDevOtp] = useState('');
 
   const step =
-    !mode ? 'mode'
-      : !role ? 'role'
+    !role ? 'role'
+      : role === 'user' && !mode ? 'mode'
         : !email ? 'email'
           : !otpSent ? 'email'
             : !otpVerified ? 'otp'
@@ -49,7 +56,7 @@ export default function AuthPage() {
       const res = await fetch('/api/otp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), mode }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
@@ -170,10 +177,16 @@ export default function AuthPage() {
         role: data.role,
         address: data.address,
         privateKey: data.privateKey,
+        blockchainPending: data.blockchainPending || false,
       }));
       window.location.href = data.role === 'verifier' ? '/issuer' : '/dashboard';
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Google sign-in failed');
+      const msg = e instanceof Error ? e.message : 'Google sign-in failed';
+      if (msg.includes('ECONNREFUSED') || msg.includes('127.0.0.1:8545')) {
+        setError('Blockchain not reachable. Start Hardhat: npx hardhat node. Then try again.');
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -186,23 +199,24 @@ export default function AuthPage() {
 
         {step === 'mode' && (
           <div className="space-y-4">
-            <p className="text-slate-400 text-center">Welcome. How would you like to continue?</p>
+            <p className="text-slate-400 text-center">Volunteer — Login or Sign up</p>
             <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={() => setMode('login')}
-                className="flex-1 py-3 px-4 bg-teal-600/80 hover:bg-teal-500 text-white rounded-lg font-medium transition-colors cursor-pointer"
+              <a
+                href="/auth?role=user&mode=login"
+                className="flex-1 py-3 px-4 bg-teal-600/80 hover:bg-teal-500 text-white rounded-lg font-medium transition-colors cursor-pointer text-center no-underline"
               >
                 Login
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode('signup')}
-                className="flex-1 py-3 px-4 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors cursor-pointer"
+              </a>
+              <a
+                href="/auth?role=user&mode=signup"
+                className="flex-1 py-3 px-4 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors cursor-pointer text-center no-underline"
               >
                 Sign Up
-              </button>
+              </a>
             </div>
+            <a href="/" className="block w-full py-2 text-slate-500 hover:text-slate-400 text-sm text-center">
+              Back to home
+            </a>
           </div>
         )}
 
@@ -210,52 +224,58 @@ export default function AuthPage() {
           <div className="space-y-4">
             <p className="text-slate-400 text-center">Select your role</p>
             <div className="grid grid-cols-2 gap-4">
-              <button
-                type="button"
-                onClick={() => setRole('user')}
-                className="flex flex-col items-center gap-2 py-6 px-4 bg-slate-700/50 hover:bg-teal-600/30 border border-slate-600 hover:border-teal-500 rounded-xl transition-colors cursor-pointer"
+              <a
+                href="/auth?role=user"
+                className="flex flex-col items-center gap-2 py-6 px-4 bg-slate-700/50 hover:bg-teal-600/30 border border-slate-600 hover:border-teal-500 rounded-xl transition-colors cursor-pointer no-underline"
               >
                 <User className="w-10 h-10 text-teal-400" />
                 <span className="font-medium text-white">Volunteer</span>
                 <span className="text-xs text-slate-400">Request & store documents</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole('verifier')}
-                className="flex flex-col items-center gap-2 py-6 px-4 bg-slate-700/50 hover:bg-teal-600/30 border border-slate-600 hover:border-teal-500 rounded-xl transition-colors cursor-pointer"
+              </a>
+              <a
+                href="/auth?role=verifier"
+                className="flex flex-col items-center gap-2 py-6 px-4 bg-slate-700/50 hover:bg-teal-600/30 border border-slate-600 hover:border-teal-500 rounded-xl transition-colors cursor-pointer no-underline"
               >
                 <ShieldCheck className="w-10 h-10 text-teal-400" />
                 <span className="font-medium text-white">Issuer</span>
                 <span className="text-xs text-slate-400">Verify & issue documents</span>
-              </button>
+              </a>
             </div>
-            <button
-              type="button"
-              onClick={() => setMode(null)}
-              className="w-full py-2 text-slate-500 hover:text-slate-400 text-sm cursor-pointer"
-            >
-              Back
-            </button>
+            <a href="/" className="block w-full py-2 text-slate-500 hover:text-slate-400 text-sm text-center">
+              Back to home
+            </a>
           </div>
         )}
 
         {step === 'email' && (
           <div className="space-y-4">
             <p className="text-slate-400 text-center">
-              {mode === 'signup' ? 'Enter your email to create an account' : 'Enter your email to receive OTP'}
+              {role === 'verifier'
+                ? 'Issuer login — enter your registered email'
+                : mode === 'signup'
+                  ? 'Enter your email to create an account'
+                  : 'Enter your email to receive OTP'}
             </p>
-            {typeof window !== 'undefined' && process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
+            {role === 'verifier' && (
+              <p className="text-amber-400/80 text-xs text-center">
+                Default issuer: rarealriree@gmail.com (use OTP to login)
+              </p>
+            )}
+            {typeof window !== 'undefined' && process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (role !== 'verifier' || mode === 'login') && (
               <>
-                <div className="flex justify-center">
+                <div className="flex flex-col items-center gap-2">
                   <GoogleLogin
                     onSuccess={handleGoogleSuccess}
-                    onError={() => setError('Google sign-in was cancelled or failed')}
+                    onError={() => setError('Add http://localhost:3000 to Authorized JavaScript origins in Google Cloud Console → Credentials.')}
                     useOneTap={false}
                     theme="filled_black"
                     size="large"
-                    text={mode === 'signup' ? 'signup_with' : 'signin_with'}
+                    text={role === 'verifier' || mode === 'login' ? 'signin_with' : 'signup_with'}
                     shape="rectangular"
                   />
+                  <p className="text-slate-500 text-xs text-center">
+                    Add both <code className="bg-slate-700 px-1 rounded">http://localhost</code> and <code className="bg-slate-700 px-1 rounded">http://localhost:3000</code> to Authorized JavaScript origins in Google Cloud Console → Credentials.
+                  </p>
                 </div>
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
@@ -282,16 +302,22 @@ export default function AuthPage() {
             >
               {loading ? 'Sending...' : 'Send OTP'}
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                setRole(null);
-                setEmail('');
-              }}
-              className="w-full py-2 text-slate-500 hover:text-slate-400 text-sm cursor-pointer"
-            >
-              Back
-            </button>
+            {role === 'verifier' ? (
+              <a href="/" className="block w-full py-2 text-slate-500 hover:text-slate-400 text-sm text-center">
+                Back to home
+              </a>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(null);
+                  setEmail('');
+                }}
+                className="w-full py-2 text-slate-500 hover:text-slate-400 text-sm cursor-pointer"
+              >
+                Back
+              </button>
+            )}
           </div>
         )}
 

@@ -19,8 +19,8 @@ export default function RootLayout({
 }) {
   const content = <AuthProvider>{children}</AuthProvider>;
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-slate-50 dark:bg-slate-900 antialiased">
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body className="min-h-screen bg-slate-900 antialiased font-sans" suppressHydrationWarning>
         {googleClientId ? (
           <GoogleOAuthProvider clientId={googleClientId}>
             {content}

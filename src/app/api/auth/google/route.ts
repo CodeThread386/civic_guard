@@ -40,12 +40,11 @@ export async function POST(request: NextRequest) {
     const existingUser = await getUserByEmail(email);
 
     if (existingUser) {
-      const exists = await checkUserExists(existingUser.address);
-      if (!exists) {
-        return NextResponse.json(
-          { error: 'Account not found on blockchain. Please sign up again.' },
-          { status: 400 }
-        );
+      let onChain = false;
+      try {
+        onChain = await checkUserExists(existingUser.address);
+      } catch {
+        onChain = existingUser.blockchainRegistered === true;
       }
       return NextResponse.json({
         action: 'login',
@@ -53,36 +52,37 @@ export async function POST(request: NextRequest) {
         address: existingUser.address,
         privateKey: existingUser.privateKey,
         role: existingUser.role,
+        blockchainPending: !onChain,
       });
     }
 
-    if (mode === 'login') {
+    if (mode !== 'signup') {
       return NextResponse.json(
-        { error: 'No account found for this Google email. Please sign up first.' },
+        { error: 'No account found. Please sign up first.' },
         { status: 404 }
       );
     }
 
     const wallet = createWallet();
     const fundResult = await fundWallet(wallet.address);
-    if (!fundResult.success) {
-      return NextResponse.json(
-        { error: fundResult.error || 'Failed to fund wallet. Is Hardhat node running?' },
-        { status: 500 }
-      );
-    }
+    let blockchainPending = false;
 
-    await registerUserOnChain(wallet.privateKey, role === 'verifier');
-    await registerUser(email, wallet.address, wallet.privateKey, role);
+    if (fundResult.success) {
+      await registerUserOnChain(wallet.privateKey, role === 'verifier');
+      await registerUser(email, wallet.address, wallet.privateKey, role, true);
 
-    if (role === 'verifier') {
-      const pubKeyHash = ethers.keccak256(ethers.toUtf8Bytes(wallet.address));
-      await addVerifier({
-        address: wallet.address,
-        pubKeyHash,
-        name: `Verifier ${wallet.address.slice(0, 8)}...`,
-        documentTypes: ['Aadhar', 'PAN', 'Degree', 'Passport', 'Driving License'],
-      });
+      if (role === 'verifier') {
+        const pubKeyHash = ethers.keccak256(ethers.toUtf8Bytes(wallet.address));
+        await addVerifier({
+          address: wallet.address,
+          pubKeyHash,
+          name: `Verifier ${wallet.address.slice(0, 8)}...`,
+          documentTypes: ['Aadhar', 'PAN', 'Degree', 'Passport', 'Driving License'],
+        });
+      }
+    } else {
+      await registerUser(email, wallet.address, wallet.privateKey, role, false);
+      blockchainPending = true;
     }
 
     return NextResponse.json({
@@ -91,12 +91,12 @@ export async function POST(request: NextRequest) {
       address: wallet.address,
       privateKey: wallet.privateKey,
       role,
+      blockchainPending,
     });
   } catch (error) {
     console.error('Google auth error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Google authentication failed' },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : 'Google authentication failed';
+    const status = message.includes('No account found') ? 404 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }

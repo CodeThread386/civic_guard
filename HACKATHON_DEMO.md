@@ -76,12 +76,19 @@ To enable "Sign in with Google":
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
 2. Create OAuth 2.0 credentials (Web application)
-3. Add authorized JavaScript origins: `http://localhost:3000` (and your production URL)
-4. Add to `.env.local`:
+3. **Authorized JavaScript origins:** Add `http://localhost:3000` (exact match; add production URL when deploying)
+4. **Authorized redirect URIs:** Add `http://localhost:3000` (required even for popup flow)
+5. Add to `.env.local`:
    ```
    NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
    ```
-5. Restart the dev server
+6. Restart the dev server
+7. **For signup:** Hardhat node must be running (`npx hardhat node`) so the app can fund the new wallet
+
+**Troubleshooting:**
+- **"The given origin is not allowed"** – Add `http://localhost:3000` to Authorized JavaScript origins in Google Cloud Console
+- **500 on Google sign-in** – Start Hardhat node (`npx hardhat node`) and run `npm run setup-demo` first
+- **Cross-Origin-Opener-Policy / postMessage** – The app sets the required COOP header; restart the dev server after pulling updates
 
 Without this, the email OTP flow still works.
 

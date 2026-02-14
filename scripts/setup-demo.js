@@ -139,6 +139,7 @@ async function main() {
     iv: iv.toString("base64"),
     salt: "civicguard",
     role: "verifier",
+    blockchainRegistered: true,
   };
   fs.writeFileSync(userRegistryPath, JSON.stringify(userRegistry, null, 2));
   console.log("Added to user registry:", ISSUER_EMAIL);

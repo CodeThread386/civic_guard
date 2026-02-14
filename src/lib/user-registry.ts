@@ -14,6 +14,7 @@ type UserRecord = {
   iv: string;
   salt: string;
   role: 'user' | 'verifier';
+  blockchainRegistered?: boolean;
 };
 
 type RegistryData = Record<string, UserRecord>;
@@ -27,7 +28,8 @@ export async function registerUser(
   email: string,
   address: string,
   privateKey: string,
-  role: 'user' | 'verifier'
+  role: 'user' | 'verifier',
+  blockchainRegistered = true
 ): Promise<void> {
   const data = await readJson<RegistryData>(FILENAME) || {};
   const key = getEncryptionKey();
@@ -46,6 +48,7 @@ export async function registerUser(
     iv: iv.toString('base64'),
     salt: 'civicguard',
     role,
+    blockchainRegistered,
   };
   await writeJson(FILENAME, data);
 }
@@ -54,6 +57,7 @@ export async function getUserByEmail(email: string): Promise<{
   address: string;
   privateKey: string;
   role: 'user' | 'verifier';
+  blockchainRegistered?: boolean;
 } | null> {
   const data = await readJson<RegistryData>(FILENAME) || {};
   const record = data[email.toLowerCase().trim()];
@@ -75,5 +79,14 @@ export async function getUserByEmail(email: string): Promise<{
     address: record.address,
     privateKey,
     role: record.role,
+    blockchainRegistered: record.blockchainRegistered !== false,
   };
+}
+
+export async function setUserBlockchainRegistered(email: string): Promise<void> {
+  const data = await readJson<RegistryData>(FILENAME) || {};
+  const record = data[email.toLowerCase().trim()];
+  if (!record) return;
+  record.blockchainRegistered = true;
+  await writeJson(FILENAME, data);
 }

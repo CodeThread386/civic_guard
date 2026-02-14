@@ -11,6 +11,7 @@ export type AuthState = {
   address: string;
   privateKey: string;
   isAuthenticated: boolean;
+  blockchainPending?: boolean;
 };
 
 const STORAGE_KEY = 'civicguard_auth';
@@ -93,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       const data = await res.json();
       if (!res.ok || !data.address || !data.privateKey) {
-        return { success: false, error: 'No account found for this email. Please sign up first.' };
+        return { success: false, error: data.error || 'No account found. Please sign up first.' };
       }
       stored = {
         email: normalizedEmail,

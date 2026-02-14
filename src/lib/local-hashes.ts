@@ -1,8 +1,22 @@
 /**
  * Client-side local storage of document hashes.
  * Used in conjunction with blockchain storage for redundancy.
+ * All data is scoped by user address to prevent cross-user data leakage.
  */
-const STORAGE_KEY = 'civicguard_doc_hashes';
+const STORAGE_KEY_PREFIX = 'civicguard_doc_hashes_';
+const PROCESSED_REQUESTS_KEY_PREFIX = 'civicguard_processed_requests_';
+
+function normalizeAddress(addr: string): string {
+  return (addr || '').toLowerCase().trim();
+}
+
+function getHashesKey(address: string): string {
+  return `${STORAGE_KEY_PREFIX}${normalizeAddress(address)}`;
+}
+
+function getProcessedKey(address: string): string {
+  return `${PROCESSED_REQUESTS_KEY_PREFIX}${normalizeAddress(address)}`;
+}
 
 export type StoredHash = {
   hash: string;
@@ -12,10 +26,11 @@ export type StoredHash = {
   metadata?: Record<string, string>;
 };
 
-export function getLocalHashes(): StoredHash[] {
+export function getLocalHashes(userAddress: string): StoredHash[] {
   if (typeof window === 'undefined') return [];
+  if (!userAddress) return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(getHashesKey(userAddress));
     if (!raw) return [];
     return JSON.parse(raw);
   } catch {
@@ -23,26 +38,26 @@ export function getLocalHashes(): StoredHash[] {
   }
 }
 
-export function addLocalHash(entry: StoredHash): void {
-  const hashes = getLocalHashes();
+export function addLocalHash(entry: StoredHash, userAddress: string): void {
+  if (!userAddress) return;
+  const hashes = getLocalHashes(userAddress);
   if (hashes.some((h) => h.hash === entry.hash)) return;
   hashes.push(entry);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(hashes));
+  localStorage.setItem(getHashesKey(userAddress), JSON.stringify(hashes));
 }
 
-export function getLocalDocumentTypes(): string[] {
-  const hashes = getLocalHashes();
+export function getLocalDocumentTypes(userAddress: string): string[] {
+  const hashes = getLocalHashes(userAddress);
   const types = new Set<string>();
   hashes.forEach((h) => types.add(h.documentType));
   return Array.from(types);
 }
 
-const PROCESSED_REQUESTS_KEY = 'civicguard_processed_requests';
-
-export function getProcessedRequestIds(): string[] {
+export function getProcessedRequestIds(userAddress: string): string[] {
   if (typeof window === 'undefined') return [];
+  if (!userAddress) return [];
   try {
-    const raw = localStorage.getItem(PROCESSED_REQUESTS_KEY);
+    const raw = localStorage.getItem(getProcessedKey(userAddress));
     if (!raw) return [];
     return JSON.parse(raw);
   } catch {
@@ -50,16 +65,17 @@ export function getProcessedRequestIds(): string[] {
   }
 }
 
-export function markRequestProcessed(requestId: string): void {
-  const ids = getProcessedRequestIds();
+export function markRequestProcessed(requestId: string, userAddress: string): void {
+  if (!userAddress) return;
+  const ids = getProcessedRequestIds(userAddress);
   if (ids.includes(requestId)) return;
   ids.push(requestId);
-  localStorage.setItem(PROCESSED_REQUESTS_KEY, JSON.stringify(ids));
+  localStorage.setItem(getProcessedKey(userAddress), JSON.stringify(ids));
 }
 
 /** Get metadata per document type (most recent entry per type). */
-export function getMetadataByDocType(): Record<string, Record<string, string>> {
-  const hashes = getLocalHashes();
+export function getMetadataByDocType(userAddress: string): Record<string, Record<string, string>> {
+  const hashes = getLocalHashes(userAddress);
   const byType: Record<string, { meta: Record<string, string>; ts: number }> = {};
   for (const h of hashes) {
     if (!h.metadata || Object.keys(h.metadata).length === 0) continue;
