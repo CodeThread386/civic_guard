@@ -8,6 +8,7 @@ import { processApprovedDocument } from '@/lib/process-approved-document';
 import { Upload, LogOut, Share2 } from 'lucide-react';
 import { UploadDocumentModal } from '@/components/UploadDocumentModal';
 import { ShareModal } from '@/components/ShareModal';
+import { isWebAuthnSupported, verifyLocalDevice } from '@/lib/localAuth';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function DashboardPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [completingBlockchain, setCompletingBlockchain] = useState(false);
+  const [verifyingBiometric, setVerifyingBiometric] = useState(false);
 
   useEffect(() => {
     if (!authLoaded) return;
@@ -146,6 +148,41 @@ export default function DashboardPage() {
     }
   };
 
+  const handleShareClick = async () => {
+    // Check if documents exist
+    if (documentTypes.length === 0) {
+      return; // Button is disabled anyway, but double-check
+    }
+
+    // Check WebAuthn support
+    if (!isWebAuthnSupported()) {
+      const proceed = window.confirm(
+        'Biometric authentication is not supported on this browser/device. ' +
+        'Your QR code will be shown without additional verification. Continue?'
+      );
+      if (proceed) {
+        setShowShareModal(true);
+      }
+      return;
+    }
+
+    // Perform biometric verification
+    setVerifyingBiometric(true);
+    try {
+      await verifyLocalDevice();
+      // Verification successful - show modal
+      setShowShareModal(true);
+    } catch (error) {
+      // Verification failed or cancelled
+      const message = error instanceof Error 
+        ? error.message 
+        : 'Biometric verification failed';
+      alert(message);
+    } finally {
+      setVerifyingBiometric(false);
+    }
+  };
+
   const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
   if (!contractAddress || contractAddress.trim() === '') {
     return (
@@ -209,12 +246,12 @@ export default function DashboardPage() {
             Request Document
           </button>
           <button
-            onClick={() => setShowShareModal(true)}
-            disabled={documentTypes.length === 0}
+            onClick={handleShareClick}
+            disabled={documentTypes.length === 0 || verifyingBiometric}
             className="flex-1 flex items-center justify-center gap-3 py-4 px-6 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
           >
             <Share2 className="w-5 h-5" />
-            Share for Verification
+            {verifyingBiometric ? 'Verifying...' : 'Share for Verification'}
           </button>
         </div>
 

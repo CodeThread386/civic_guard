@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { getLocalDocumentTypes, getMetadataByDocType } from '@/lib/local-hashes';
@@ -16,6 +16,7 @@ export function ShareModal({ address, onClose }: Props) {
   const [shortId, setShortId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const hasFetched = useRef(false);
 
   const createShare = useCallback(async () => {
     setLoading(true);
@@ -53,6 +54,8 @@ export function ShareModal({ address, onClose }: Props) {
   }, [address]);
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     createShare();
   }, [createShare]);
 
