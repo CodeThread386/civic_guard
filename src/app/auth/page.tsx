@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
 import { User, ShieldCheck } from 'lucide-react';
 
 type AuthMode = 'choose' | 'login' | 'signup';
@@ -147,6 +148,37 @@ export default function AuthPage() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse: { credential?: string }) => {
+    const credential = credentialResponse.credential;
+    if (!credential || !role) return;
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          credential,
+          role,
+          mode,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Google sign-in failed');
+      localStorage.setItem('civicguard_auth', JSON.stringify({
+        email: data.email,
+        role: data.role,
+        address: data.address,
+        privateKey: data.privateKey,
+      }));
+      window.location.href = data.role === 'verifier' ? '/issuer' : '/dashboard';
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Google sign-in failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-teal-900/20 to-slate-900 p-4">
       <div className="w-full max-w-md bg-slate-800/50 backdrop-blur rounded-2xl border border-slate-700/50 p-8 shadow-xl">
@@ -212,6 +244,29 @@ export default function AuthPage() {
             <p className="text-slate-400 text-center">
               {mode === 'signup' ? 'Enter your email to create an account' : 'Enter your email to receive OTP'}
             </p>
+            {typeof window !== 'undefined' && process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
+              <>
+                <div className="flex justify-center">
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => setError('Google sign-in was cancelled or failed')}
+                    useOneTap={false}
+                    theme="filled_black"
+                    size="large"
+                    text={mode === 'signup' ? 'signup_with' : 'signin_with'}
+                    shape="rectangular"
+                  />
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-slate-600" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-slate-800/50 px-2 text-slate-500">or continue with email</span>
+                  </div>
+                </div>
+              </>
+            )}
             <input
               type="email"
               placeholder="you@example.com"

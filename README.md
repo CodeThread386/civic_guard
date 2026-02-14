@@ -49,6 +49,7 @@ NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8545
 SMTP_USER=                # Gmail address
 SMTP_PASS=                # Gmail App Password
 ENCRYPTION_SECRET=        # For user registry (use strong secret in production)
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=   # Optional: Google OAuth client ID (from Google Cloud Console)
 ```
 
 ### 3. Compile & deploy the smart contract

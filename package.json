@@ -15,7 +15,9 @@
     "test:e2e": "playwright test --project=chromium"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.13.4",
     "ethers": "^6.9.0",
+    "google-auth-library": "^10.5.0",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.294.0",
     "next": "14.0.4",

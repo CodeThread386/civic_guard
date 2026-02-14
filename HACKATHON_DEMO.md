@@ -70,6 +70,23 @@ This starts Hardhat node, runs setup-demo, and launches the dev server. Open [ht
 
 ---
 
+## Google OAuth (Optional)
+
+To enable "Sign in with Google":
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+2. Create OAuth 2.0 credentials (Web application)
+3. Add authorized JavaScript origins: `http://localhost:3000` (and your production URL)
+4. Add to `.env.local`:
+   ```
+   NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   ```
+5. Restart the dev server
+
+Without this, the email OTP flow still works.
+
+---
+
 ## OTP Without Email
 
 For demo without SMTP:
