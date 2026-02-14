@@ -5,19 +5,22 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-geist-mono)', 'monospace'],
-      },
       colors: {
-        civic: {
-          primary: '#0f766e',
-          secondary: '#134e4a',
-          accent: '#2dd4bf',
-          dark: '#042f2e',
-        },
+        primary: '#2463eb',
+        'primary-dark': '#1d4ed8',
+        'primary-hover': '#1d4ed8',
+        'background-light': '#f6f6f8',
+        'background-dark': '#020617',
+        'surface-dark': '#0f172a',
+        'surface-border': '#1e293b',
+      },
+      fontFamily: {
+        sans: ['var(--font-geist-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'monospace'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
       },
     },
   },

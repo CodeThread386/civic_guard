@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { X } from 'lucide-react';
 
 type Props = {
   request: {
@@ -30,11 +29,14 @@ export function RequestReviewModal({ request, onApprove, onReject, onClose, load
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-slate-800 rounded-2xl border border-slate-700 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b border-slate-700">
-          <h2 className="text-lg font-semibold text-white">Review Request</h2>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white rounded-lg">
-            <X className="w-5 h-5" />
+      <div className="bg-surface-dark rounded-2xl border border-surface-border max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="flex items-center justify-between p-4 border-b border-surface-border">
+          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+            <span className="material-icons text-primary">rate_review</span>
+            Review Request
+          </h2>
+          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+            <span className="material-icons">close</span>
           </button>
         </div>
         <div className="p-4 space-y-4">
@@ -71,13 +73,13 @@ export function RequestReviewModal({ request, onApprove, onReject, onClose, load
               onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
               className="block w-full text-sm text-slate-400"
             />
-            {documentFile && <p className="text-teal-400 text-sm mt-1">{documentFile.name}</p>}
+            {documentFile && <p className="text-primary text-sm mt-1 flex items-center gap-1"><span className="material-icons text-sm">check_circle</span>{documentFile.name}</p>}
           </div>
           <div className="flex gap-2 pt-4">
             <button
               onClick={handleApprove}
               disabled={loading || !documentFile}
-              className="flex-1 py-3 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg"
+              className="flex-1 py-3 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg flex items-center justify-center gap-2"
             >
               {loading ? 'Approving...' : 'Approve & Send Document'}
             </button>

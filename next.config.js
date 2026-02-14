@@ -6,10 +6,7 @@ const nextConfig = {
       {
         source: '/:path*',
         headers: [
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'unsafe-none',
-          },
+          { key: 'Cross-Origin-Opener-Policy', value: 'unsafe-none' },
         ],
       },
     ];

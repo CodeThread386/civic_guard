@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { LogOut } from 'lucide-react';
 import { RequestReviewModal } from '@/components/RequestReviewModal';
 import { ethers } from 'ethers';
 
@@ -122,7 +122,7 @@ export default function IssuerPage() {
 
   if (!authLoaded || !auth.isAuthenticated) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-900/10 to-slate-900 flex items-center justify-center">
+      <main className="min-h-screen bg-background-dark flex items-center justify-center">
         <p className="text-slate-400">Loading...</p>
       </main>
     );
@@ -156,15 +156,15 @@ export default function IssuerPage() {
   const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
   if (!contractAddress || contractAddress.trim() === '') {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-900/10 to-slate-900 flex items-center justify-center p-4">
-        <div className="max-w-md p-6 bg-slate-800 rounded-xl border border-amber-600/50">
+      <main className="min-h-screen bg-background-dark flex items-center justify-center p-4">
+        <div className="max-w-md p-6 bg-surface-dark rounded-xl border border-amber-600/50">
           <h2 className="text-lg font-semibold text-amber-400 mb-2">Blockchain not configured</h2>
           <p className="text-slate-400 text-sm mb-4">
-            Run <code className="bg-slate-700 px-2 py-1 rounded">npm run setup-demo</code> with Hardhat node running first.
+            Run <code className="bg-slate-800 px-2 py-1 rounded">npm run setup-demo</code> with Hardhat node running first.
           </p>
           <p className="text-slate-500 text-xs">
-            Terminal 1: <code className="bg-slate-700 px-2 py-1 rounded">npx hardhat node</code><br />
-            Terminal 2: <code className="bg-slate-700 px-2 py-1 rounded">npm run setup-demo</code>
+            Terminal 1: <code className="bg-slate-800 px-2 py-1 rounded">npx hardhat node</code><br />
+            Terminal 2: <code className="bg-slate-800 px-2 py-1 rounded">npm run setup-demo</code>
           </p>
         </div>
       </main>
@@ -172,25 +172,38 @@ export default function IssuerPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-900/10 to-slate-900">
-      <header className="border-b border-slate-700/50 bg-slate-900/50 backdrop-blur">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-white">CivicGuard Issuer</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-slate-400 text-sm">{auth.email}</span>
-            <button
-              onClick={logout}
-              className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-white rounded-lg transition-colors"
-            >
-              <LogOut className="w-4 h-5" />
-              Logout
-            </button>
+    <main className="min-h-screen bg-background-dark font-display text-slate-200">
+      <header className="h-16 border-b border-slate-800 bg-surface-dark flex items-center px-6 shrink-0 z-20">
+        <Link href="/" className="mr-4 p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800 cursor-pointer">
+          <span className="material-icons">arrow_back</span>
+        </Link>
+        <div className="flex items-center gap-3 flex-1">
+          <div className="w-9 h-9 rounded bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
+            <span className="material-icons text-xl">shield</span>
           </div>
+          <div>
+            <h1 className="font-bold text-lg leading-tight tracking-tight text-white">CivicGuard</h1>
+            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Issuer Dashboard</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-slate-700">
+            <span className="material-icons text-emerald-500 text-sm">wifi</span>
+            <span className="text-xs font-semibold text-slate-300">Connection Stable</span>
+          </div>
+          <span className="text-slate-400 text-sm">{auth.email}</span>
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-red-400 rounded-lg transition-colors"
+          >
+            <span className="material-icons">logout</span>
+            Logout
+          </button>
         </div>
       </header>
 
       {auth.blockchainPending && (
-        <div className="max-w-4xl mx-auto px-4 pt-4">
+        <div className="max-w-7xl mx-auto px-6 pt-4">
           <div className="p-4 bg-amber-900/30 border border-amber-600/50 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <p className="text-amber-200 text-sm">
               Complete blockchain registration to approve documents. Start Hardhat: <code className="bg-slate-800 px-2 py-0.5 rounded">npx hardhat node</code>
@@ -206,49 +219,60 @@ export default function IssuerPage() {
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-6 py-8">
         <section>
-          <h2 className="text-lg font-medium text-white mb-4">Pending Document Requests</h2>
-          <p className="text-slate-400 text-sm mb-4">
+          <h2 className="text-2xl font-bold text-white tracking-tight mb-1">Pending Document Requests</h2>
+          <p className="text-slate-500 text-sm mb-6">
             Review requests, verify the volunteer&apos;s details, and approve by uploading the verified document.
           </p>
           {pendingRequests.length === 0 ? (
-            <p className="text-slate-500">No pending requests</p>
+            <div className="border-2 border-dashed border-slate-800 rounded-xl p-12 flex flex-col items-center justify-center text-center">
+              <span className="material-icons text-slate-600 text-5xl mb-4">inbox</span>
+              <p className="text-slate-400 font-medium">No pending requests</p>
+              <p className="text-slate-500 text-sm mt-1">New requests will appear here</p>
+            </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {pendingRequests.map((r) => (
                 <div
                   key={r.id}
-                  className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700"
+                  className="group relative bg-surface-dark border border-slate-800 rounded-xl p-5 hover:border-primary/50 transition-all"
                 >
-                  <div>
-                    <p className="text-white font-medium">{r.documentType}</p>
-                    <p className="text-slate-500 text-sm">{r.userEmail}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setReviewRequest(r)}
-                      className="px-3 py-1.5 bg-slate-600 hover:bg-slate-500 text-white rounded-lg text-sm"
-                    >
-                      Review
-                    </button>
-                    <button
-                      onClick={async () => {
-                        setActionLoading(true);
-                        try {
-                          await signAndSend(r.id, 'reject');
-                          setPendingRequests((prev) => prev.filter((x) => x.id !== r.id));
-                        } catch {
-                          alert('Failed to reject');
-                        } finally {
-                          setActionLoading(false);
-                        }
-                      }}
-                      disabled={actionLoading}
-                      className="px-3 py-1.5 bg-red-600/80 hover:bg-red-500 text-white rounded-lg text-sm disabled:opacity-50"
-                    >
-                      Reject
-                    </button>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary border border-primary/30">
+                        <span className="material-icons">description</span>
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold">{r.documentType}</p>
+                        <p className="text-slate-500 text-sm">{r.userEmail}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setReviewRequest(r)}
+                        className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-medium transition-colors"
+                      >
+                        Review
+                      </button>
+                      <button
+                        onClick={async () => {
+                          setActionLoading(true);
+                          try {
+                            await signAndSend(r.id, 'reject');
+                            setPendingRequests((prev) => prev.filter((x) => x.id !== r.id));
+                          } catch {
+                            alert('Failed to reject');
+                          } finally {
+                            setActionLoading(false);
+                          }
+                        }}
+                        disabled={actionLoading}
+                        className="px-4 py-2 bg-red-600/80 hover:bg-red-500 text-white rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
+                      >
+                        Reject
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

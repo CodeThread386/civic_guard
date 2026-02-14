@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { CheckCircle, XCircle } from 'lucide-react';
-import type { VerifyResult, VerifyDocResult } from '@/types/verify';
+import type { VerifyResult } from '@/types/verify';
 
 export default function VerifyResultPage() {
   const params = useParams();
@@ -30,7 +29,7 @@ export default function VerifyResultPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-900/10 to-slate-900 flex items-center justify-center">
+      <main className="min-h-screen bg-background-dark font-display flex items-center justify-center">
         <p className="text-slate-400">Loading verification...</p>
       </main>
     );
@@ -38,14 +37,14 @@ export default function VerifyResultPage() {
 
   if (error || !result) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-900/10 to-slate-900 flex flex-col items-center justify-center p-4">
-        <div className="p-6 bg-slate-800 rounded-xl border border-slate-700 max-w-md w-full text-center">
-          <XCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+      <main className="min-h-screen bg-background-dark font-display flex flex-col items-center justify-center p-4">
+        <div className="p-6 bg-surface-dark rounded-xl border border-surface-border max-w-md w-full text-center">
+          <span className="material-icons text-5xl text-red-400 mb-4 block">cancel</span>
           <h1 className="text-xl font-semibold text-white mb-2">Verification Unavailable</h1>
           <p className="text-slate-400 mb-4">{error || 'Share session expired or not found.'}</p>
           <Link
             href="/verifier"
-            className="inline-block px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg"
+            className="inline-block px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg"
           >
             Go to Verifier
           </Link>
@@ -55,50 +54,55 @@ export default function VerifyResultPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-900/10 to-slate-900">
-      <header className="border-b border-slate-700/50 bg-slate-900/50 backdrop-blur">
+    <main className="min-h-screen bg-background-dark font-display">
+      <header className="border-b border-slate-800 bg-surface-dark">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-white">CivicGuard Verification</h1>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded bg-primary flex items-center justify-center">
+              <span className="material-icons text-white text-sm">shield</span>
+            </div>
+            <h1 className="text-xl font-semibold text-white">CivicGuard Verification</h1>
+          </div>
           <Link
             href="/verifier"
-            className="px-3 py-2 text-slate-400 hover:text-white rounded-lg transition-colors"
+            className="px-3 py-2 text-slate-400 hover:text-primary rounded-lg transition-colors flex items-center gap-1"
           >
+            <span className="material-icons text-sm">qr_code_scanner</span>
             Verifier
           </Link>
         </div>
       </header>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="p-6 bg-slate-800/80 rounded-xl border border-slate-700">
+        <div className="p-6 bg-surface-dark rounded-xl border border-surface-border">
           <h2 className="text-white font-medium mb-4 flex items-center gap-2">
             {result.valid ? (
               <>
-                <CheckCircle className="w-6 h-6 text-green-400" />
+                <span className="material-icons text-green-400 text-2xl">check_circle</span>
                 Verification Passed
               </>
             ) : (
               <>
-                <XCircle className="w-6 h-6 text-red-400" />
+                <span className="material-icons text-red-400 text-2xl">cancel</span>
                 Verification Failed
               </>
             )}
           </h2>
           <p className="text-slate-500 text-sm mb-4">Address: {result.address}</p>
           <div className="space-y-2">
-            {result.results.map((r) => (
+            {(result.results || []).map((r, i) => (
               <div
-                key={r.documentType}
-                className={`flex items-center gap-2 p-3 rounded-lg ${!r.onChain ? 'bg-red-900/20' : 'bg-slate-800/50'
-                  }`}
+                key={r?.documentType || `doc-${i}`}
+                className={`flex items-center gap-2 p-3 rounded-lg ${!r?.onChain ? 'bg-red-900/20 border border-red-800/50' : 'bg-slate-800/50 border border-slate-700'}`}
               >
-                {r.onChain ? (
-                  <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                {r?.onChain ? (
+                  <span className="material-icons text-green-400 text-lg">check_circle</span>
                 ) : (
-                  <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                  <span className="material-icons text-red-400 text-lg">cancel</span>
                 )}
-                <span className="text-white font-medium">{r.documentType}</span>
+                <span className="text-white font-medium">{r?.documentType || `Document ${i + 1}`}</span>
                 <span className="text-slate-400 text-sm">
-                  {r.onChain ? 'On-chain verified' : 'Not found on-chain'}
+                  {r?.onChain ? 'On-chain verified' : 'Not found on-chain'}
                 </span>
               </div>
             ))}

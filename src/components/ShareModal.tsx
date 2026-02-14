@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { X } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { getMetadataByDocType } from '@/lib/local-hashes';
 import { getUserDocumentTypes } from '@/lib/blockchain';
@@ -66,11 +65,14 @@ export function ShareModal({ address, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-slate-800 rounded-2xl border border-slate-700 max-w-md w-full">
-        <div className="flex items-center justify-between p-4 border-b border-slate-700">
-          <h2 className="text-lg font-semibold text-white">Share for Verification</h2>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white rounded-lg">
-            <X className="w-5 h-5" />
+      <div className="bg-surface-dark rounded-2xl border border-surface-border max-w-md w-full shadow-2xl">
+        <div className="flex items-center justify-between p-4 border-b border-surface-border">
+          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+            <span className="material-icons text-primary">qr_code_2</span>
+            Share for Verification
+          </h2>
+          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+            <span className="material-icons">close</span>
           </button>
         </div>
         <div className="p-6 space-y-4">
@@ -97,7 +99,7 @@ export function ShareModal({ address, onClose }: Props) {
                     <button
                       type="button"
                       onClick={createShare}
-                      className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-sm font-medium"
+                      className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-medium"
                     >
                       Try Again
                     </button>
