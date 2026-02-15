@@ -160,6 +160,18 @@ async function main() {
     console.log("Added to issuers list");
   }
 
+  const digilockerPubKeyHash = ethers.keccak256(ethers.toUtf8Bytes("digilocker.gov.in"));
+  if (!verifiers.some((v) => v.pubKeyHash === digilockerPubKeyHash)) {
+    verifiers.push({
+      address: "0x0000000000000000000000000000000000000000",
+      pubKeyHash: digilockerPubKeyHash,
+      name: "DigiLocker",
+      documentTypes: ["Aadhar", "PAN", "Driving License"],
+    });
+    fs.writeFileSync(verifiersPath, JSON.stringify(verifiers, null, 2));
+    console.log("Added DigiLocker to issuers list");
+  }
+
   console.log("\nSetup complete. Run: npm run dev");
 }
 

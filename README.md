@@ -51,6 +51,8 @@ Create an App Password: Google Account → Security → 2-Step Verification → 
 Add to .env.local:
    SMTP_USER=your-email@gmail.com   SMTP_PASS=your-16-char-app-password
 Restart the dev server.
+Optional: DigiLocker
+Add documents from DigiLocker (Aadhaar, PAN, Driving License). Requires credentials: add DIGILOCKER_CLIENT_ID, DIGILOCKER_CLIENT_SECRET, DIGILOCKER_PRODUCT_INSTANCE_ID to .env.local. DigiLocker appears as issuer only when configured. See DIGILOCKER.md.
 Optional: Google OAuth
 Go to Google Cloud Console.
 Create OAuth 2.0 credentials (Web application).
